@@ -10,8 +10,5 @@
       "src": "/api/(.*)",
       "dest": "ai-news-web-backend/app.py"
     }
-  ],
-  "env": {
-    "TAVILY_API_KEY": "@tavily-api-key"
-  }
+  ]
 }
