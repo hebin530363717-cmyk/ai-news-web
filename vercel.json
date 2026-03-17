@@ -1,14 +1,8 @@
 {
   "builds": [
     {
-      "src": "ai-news-web-backend/app.py",
+      "src": "api/news.py",
       "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "ai-news-web-backend/app.py"
     }
   ]
 }
