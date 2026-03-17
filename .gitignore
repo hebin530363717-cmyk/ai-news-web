@@ -6,6 +6,7 @@ __pycache__/
 
 # Build outputs
 dist/
+dist-ssr/
 build/
 *.egg-info/
 
@@ -19,14 +20,23 @@ build/
 .vscode/
 *.swp
 *.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
 # OS
 .DS_Store
 Thumbs.db
 
 # Logs
+logs/
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # OpenClaw
 .openclaw/
@@ -34,3 +44,4 @@ npm-debug.log*
 
 # Misc
 *.tar.gz
+*.local
