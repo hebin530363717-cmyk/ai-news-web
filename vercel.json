@@ -1,7 +1,7 @@
 {
   "builds": [
     {
-      "src": "ai-news-web/dist/**",
+      "src": "ai-news-web",
       "use": "@vercel/static"
     },
     {
@@ -16,7 +16,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "ai-news-web/dist/$1"
+      "dest": "ai-news-web/$1"
     }
   ],
   "env": {
