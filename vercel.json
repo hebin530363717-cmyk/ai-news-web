@@ -1,6 +1,10 @@
 {
   "builds": [
     {
+      "src": "ai-news-web/dist/**",
+      "use": "@vercel/static"
+    },
+    {
       "src": "ai-news-web-backend/app.py",
       "use": "@vercel/python"
     }
@@ -9,6 +13,10 @@
     {
       "src": "/api/(.*)",
       "dest": "ai-news-web-backend/app.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "ai-news-web/dist/$1"
     }
   ],
   "env": {
