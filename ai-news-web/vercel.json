@@ -1,8 +1,6 @@
 {
-  "src": "./package.json",
-  "use": "@vercel/static-build",
-  "config": {
-    "buildCommand": "npm run build",
-    "outputDirectory": "dist"
+  "build": {
+    "outputDirectory": "dist",
+    "command": "pnpm install && pnpm build"
   }
 }
