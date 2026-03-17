@@ -20,7 +20,7 @@ def handler(request):
     """Vercel Serverless Function handler"""
     
     # 设置 CORS
-    headers = {
+    cors_headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
@@ -28,16 +28,26 @@ def handler(request):
     
     # 处理 OPTIONS 预检请求
     if request.method == 'OPTIONS':
-        return {'statusCode': 200, 'headers': headers, 'body': ''}
+        return 200, cors_headers, ''
     
+    # 获取路径和查询参数
     path = request.path
-    query_params = request.query
+    
+    # Vercel Python API 的查询参数访问方式
+    query = {}
+    if hasattr(request, 'query'):
+        q = request.query
+        if isinstance(q, str):
+            from urllib.parse import parse_qs
+            query = {k: v[0] if len(v) == 1 else v for k, v in parse_qs(q).items()}
+        elif isinstance(q, dict):
+            query = q
+    
+    category = query.get('category', ['all'])[0] if isinstance(query.get('category'), list) else query.get('category', 'all')
+    keyword = query.get('keyword', [''])[0] if isinstance(query.get('keyword'), list) else query.get('keyword', '')
     
     # /api/news
-    if path == '/api/news' or path.endswith('/news'):
-        category = query_params.get('category', 'all')
-        keyword = query_params.get('keyword', '')
-        
+    if path == '/api/news' or path == '/news' or path.endswith('/news'):
         search_query = CATEGORY_KEYWORDS.get(category, CATEGORY_KEYWORDS['all'])
         if keyword:
             search_query = f"{keyword} {search_query}"
@@ -60,10 +70,11 @@ def handler(request):
                 
                 news_list = []
                 for i, item in enumerate(results):
+                    content = item.get('content', '')
                     news_list.append({
                         'id': str(i + 1),
                         'title': item.get('title', 'Untitled'),
-                        'description': (item.get('content', '')[:200] + '...') if len(item.get('content', '')) > 200 else item.get('content', ''),
+                        'description': (content[:200] + '...') if len(content) > 200 else content,
                         'url': item.get('url', '#'),
                         'source': item.get('source', 'Unknown'),
                         'publishedAt': item.get('published_on', datetime.now().strftime('%Y-%m-%d')),
@@ -71,35 +82,19 @@ def handler(request):
                         'category': category
                     })
                 
-                return {
-                    'statusCode': 200,
-                    'headers': headers,
-                    'body': json.dumps(news_list)
-                }
+                return 200, cors_headers, json.dumps(news_list)
             else:
-                return {
-                    'statusCode': 500,
-                    'headers': headers,
-                    'body': json.dumps({'error': 'API request failed'})
-                }
+                return 500, cors_headers, json.dumps({'error': 'API request failed', 'detail': response.text})
         except Exception as e:
-            return {
-                'statusCode': 500,
-                'headers': headers,
-                'body': json.dumps({'error': str(e)})
-            }
+            return 500, cors_headers, json.dumps({'error': str(e)})
     
     # /api/health
-    if path == '/api/health' or path.endswith('/health'):
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps({'status': 'ok', 'time': datetime.now().isoformat()})
-        }
+    if path == '/api/health' or path == '/health' or path.endswith('/health'):
+        return 200, cors_headers, json.dumps({'status': 'ok', 'time': datetime.now().isoformat()})
+    
+    # 根路径 /api
+    if path == '/api' or path == '/':
+        return 200, cors_headers, json.dumps({'message': 'AI News API', 'endpoints': ['/news', '/health']})
     
     # 404
-    return {
-        'statusCode': 404,
-        'headers': headers,
-        'body': json.dumps({'error': 'Not found'})
-    }
+    return 404, cors_headers, json.dumps({'error': 'Not found'})
