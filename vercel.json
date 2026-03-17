@@ -2,25 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "ai-news-web/dist/**",
-      "use": "@vercel/static"
-    },
-    {
       "src": "ai-news-web-backend/app.py",
       "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "ai-news-web-backend/app.py"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "ai-news-web/dist/index.html"
     }
   ]
 }
